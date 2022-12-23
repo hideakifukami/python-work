@@ -1,0 +1,5 @@
+user_infos = []
+user_infos.append(f'{input("Qual seu nome?")}')
+user_infos.append(f'{input("Qual sua idade?")}')
+user_infos.append(f'{input("Qual sua escolaridade?")}')
+print(user_infos)
