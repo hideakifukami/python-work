@@ -115,30 +115,52 @@ Vamos jogar?!''')
     while True: #Looping Principal
         secretObject = getSecretObject()
         random.shuffle(secretObject)
+        
+        secretName = ''
+        if secretObject[0] in torneira:
+            secretName = 'torneira'
+        elif secretObject[0] in notebook:
+            secretName = 'notebook'
+        elif secretObject[0] in torradeira:
+            secretName = 'torradeira'
+        elif secretObject[0] in mesa:
+            secretName = 'mesa'
+        elif secretObject[0] in cafe:
+            secretName = 'cafe'
+        elif secretObject[0] in copo:
+            secretName = 'copo'
+        elif secretObject[0] in salgadinho:
+            secretName = 'salgadinho'
+        elif secretObject[0] in chocolate:
+            secretName = 'chocolate'
+
         for i in range(0, 10):
             secretObject[i] = f'{i+1}. ' + secretObject[i]
-        print('\nVamos lá! Escolha um número de 1 a 10!')
-        
+
+        print(secretObject)
+        print(secretName)
         numGuesses = 1
         numChoices = list(range(1, 11))
         while numGuesses <= 10:
-            choice = input('> ')
             guess = ''         
-            while guess.lower() != secretObject:
+            while guess.lower() != secretName:
+                choice = int(input('Vamos lá! Escolha um número de 1 a 10!\n> '))
                 if choice in numChoices:
                     print(f'Você escolheu a dica #{choice}: \n')
                     clue = secretObject[choice]
-                    print(clue)
-                    print('Qual o seu palpite?\n')
-                    guess = input('> ')
+                    print(clue + '\n')
+                    guess = input('Qual o seu palpite?\n> ')
+                    numChoices.remove(choice)
                 else:
                     print('Você já escolheu esse número.')
                 
-            if guess.lower == secretObject:
+            if guess.lower == secretName:
                 break
             if numGuesses > 10:
                 print('Todas suas dicas acabaram!')
-                print(f'A resposta era {secretObject}.')
+                print(f'A resposta era {secretName.title()}.')
+            
+            numGuesses += 1
         
         print('Você quer jogar novamente? (Sim ou Não)')
         if not input('> ').lower().startswith('s'):
