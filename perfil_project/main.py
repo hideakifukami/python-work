@@ -107,14 +107,18 @@ def main():
     print(f'''JuuKyuu! Um jogo de adivinhação.
 By Hideaki Fukami
 
-Bem vindo ao 10Q! Nesse jogo você terá a possibilidade de escolher entre dez opções e receber uma dica para te ajudar a descobrir qual a coisa em questão.
-Quando menos dicas você precisar recerber, mais pontos você ganha!
+Bem vindo ao 10Q!
+Nesse jogo você terá a possibilidade de escolher entre dez opções e receber uma dica para te ajudar a descobrir qual a coisa em questão.
 
-Vamos jogar?!''')
+Quando menos dicas você precisar receber, mais pontos você ganha!
+
+Vamos jogar?!
+''')
 
     while True: #Looping Principal
         secretObject = getSecretObject()
         random.shuffle(secretObject)
+        pontosTotal = 0
         
         secretName = ''
         if secretObject[0] in torneira:
@@ -137,8 +141,6 @@ Vamos jogar?!''')
         for i in range(0, 10):
             secretObject[i] = f'{i+1}. ' + secretObject[i]
 
-        print(secretObject)
-        print(secretName)
         numGuesses = 1
         numChoices = list(range(1, 11))
         while numGuesses <= 10:
@@ -147,23 +149,30 @@ Vamos jogar?!''')
                 choice = int(input('Vamos lá! Escolha um número de 1 a 10!\n> '))
                 if choice in numChoices:
                     print(f'Você escolheu a dica #{choice}: \n')
-                    clue = secretObject[choice]
+                    clue = secretObject[choice - 1]
                     print(clue + '\n')
                     guess = input('Qual o seu palpite?\n> ')
+                    print('\n')
                     numChoices.remove(choice)
-                else:
-                    print('Você já escolheu esse número.')
+                elif choice not in numChoices:
+                    print('Você já escolheu esse número. Tente novamente.\n')
                 
-            if guess.lower == secretName:
+            if guess.lower() == secretName:
+                points = 10 - numGuesses
+                print(f'Você ganhou {points}!')
                 break
             if numGuesses > 10:
-                print('Todas suas dicas acabaram!')
+                points = 0
+                print('Todas suas dicas acabaram e você não pontuou!\n')
                 print(f'A resposta era {secretName.title()}.')
+                break
             
             numGuesses += 1
-        
+
+        pontosTotal += points
         print('Você quer jogar novamente? (Sim ou Não)')
         if not input('> ').lower().startswith('s'):
+            print(f'Seu total de pontos foi de {pontosTotal} pontos.')
             break
     print('Obrigado por jogar!')
 
