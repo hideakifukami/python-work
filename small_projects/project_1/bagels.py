@@ -63,7 +63,7 @@ def getClues(guess, secretNum):
     
     clues = []
 
-    for i in range (len(guess)):
+    for i in range(len(guess)):
         if guess[i] == secretNum[i]:
             clues.append('Fermi')
         elif guess[i] in secretNum:
