@@ -160,6 +160,7 @@ Vamos jogar?!
             if guess.lower() == secretName:
                 points = 10 - numGuesses
                 print(f'Você ganhou {points}!')
+                guess = ''
                 break
             if numGuesses > 10:
                 points = 0
