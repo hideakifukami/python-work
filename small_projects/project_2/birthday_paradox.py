@@ -11,7 +11,7 @@ def getBirthdays(numberOfBirthdays):
         startOfYear = datetime.date(2022, 1, 1)
 
         # Get a random day into the year:
-        randomNumberOfDays = datetime.timedelta(random.randinte(0, 364))    
+        randomNumberOfDays = datetime.timedelta(random.randint(0, 364))    
         birthday = startOfYear + randomNumberOfDays
         birthdays.append(birthday)
     return birthdays
@@ -54,12 +54,44 @@ print(f'Here are {numBDays} birthdays:')
 birthdays = getBirthdays(numBDays)
 for i, birthday in enumerate(birthdays):
     if i != 0:
-        print(', ', end='')
+        print('/ ', end='')
     monthName = MONTHS[birthday.month - 1]
-    dateText = f'{monthName}, birthday.day'
+    dateText = f'{monthName}, {birthday.day}'
     print(dateText, end='')
 print()
 print()
 
 # Determine if there are two birthdays that match.
+match = getMath(birthdays)
 
+print('In this simulation, ', end='')
+if match != None:
+    monthName = MONTHS[match.month - 1]
+    dateText = f'{monthName} {match.day}'
+    print(f'multiple people have a birthday on {dateText}.')
+else:
+    print('there are no matching birthdays.')
+print()
+
+
+# Run through 100,000 simulations:
+print(f'Generating {numBDays} random birthdays 100.000 times...')
+input('Press Enter to begin...')
+
+print("Let's run another 100.000 simulations.")
+simMatch = 0 # How many simulations had matching birthdays in them.
+for i in range(100_000):
+    # Report on the progress every 10.000 simulations:
+    if i % 10_000 == 0:
+        print(f'{i} simulations run...')
+    birthdays = getBirthdays(numBDays)
+    if getMath(birthdays) != None:
+        simMatch += 1
+print('100.000 simulations run.')
+
+probability = round(simMatch / 100_000 * 100, 2)
+print(f'''Out of 100.000 simulations of {numBDays} people, there was a
+matching birthday in that group {simMatch} times. This means
+that {numBDays} people have a {probability}% chance of
+having a matching birthday in their group.
+That's probably more than you would think!''')
