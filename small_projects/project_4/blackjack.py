@@ -40,6 +40,65 @@ def main():
         dealerHand = [deck.pop(), deck.pop()]
         playerHand = [deck.pop(), deck.pop()]
 
+        # Handle player actions:
+        print(f'Bet: {bet}')
+        while True: # Keep looping until player stands or busts.
+            displayHands(playerHand, dealerHand, False)
+            print()
+
+            if getHandValue(playerHand) > 21:
+                break
+
+            move = getMove(playerHand, money - bet)
+            if move == 'D':
+                additionalBet = getBet(min(bet, (money - bet)))
+                bet += additionalBet
+                print(f'Bet increased to {bet}.')
+                print('Bet: ', bet)
+
+            if move in ('H', 'D'):
+                newCard = deck.pop()
+                rank, suit = newCard
+                print(f'You drew a {rank} of {suit}.')
+                playerHand.append(newCard)
+
+                if getHandValue(playerHand) > 21:
+                    continue
+            
+            if move in ('S', 'D'):
+                break
+        
+        if getHandValue(playerHand) <= 21:
+            while getHandValue(dealerHand) < 17:
+                print('Dealer hits...')
+                dealerHand.append(deck.pop())
+                displayHands(playerHand, dealerHand, False)
+
+                if getHandValue(dealerHand) > 21:
+                    break
+                input('Press Enter to continue...')
+                print('\n\n')
+        
+        displayHands(playerHand, dealerHand, True)
+
+        playerValue = getHandValue(playerHand)
+        dealerValue = getHandValue(dealerHand)
+
+        if dealerValue > 21:
+            print(f'Dealer busts! You win ${bet}!')
+            money += bet
+        elif (playerValue > 21) or (playerValue < dealerValue):
+            print('You lost!')
+            money -= bet
+        elif playerValue > dealerValue:
+            print(f'You won ${bet}!')
+            money += bet
+        elif playerValue == dealerValue:
+            print("It's a tie, the bet is returnet to you.")
+
+        input('Press Enter to continue...')
+        print('\n\n')
+
 def getBet(maxBet):
     while True: # Keep asking until they enter a valid amount.
         print(f'How much do you bet? (1-{maxBet}, or QUIT)')
@@ -64,3 +123,71 @@ def getDeck():
             deck.append((rank, suit))
     random.shuffle(deck)
     return deck
+
+def displayHands(playerHand, dealerHand, showDealerHand):
+    # Show the player's and dealer's cards. Hide the dealer's first card if showDealerHand is False.
+    print()
+    if showDealerHand:
+        print('DEALER: ', getHandValue(dealerHand))
+        displayCards(dealerHand)
+    else:
+        print('DEALER: ???')
+        displayCards([BACKSIDE] + dealerHand[1:])
+    
+    print('PLAYER: ', getHandValue(playerHand))
+    displayCards(playerHand)
+
+def getHandValue(cards):
+    value = 0
+    numberOfAces = 0
+
+    for card in cards:
+        rank = card[0]
+        if  rank == 'A':
+            numberOfAces += 1
+        elif rank in ('K', 'Q', 'J'):
+            value += 10
+        else:
+            value += int(rank)
+    
+    value += numberOfAces
+    for i in range(numberOfAces):
+        if value + 10 <= 21:
+            value += 10
+    
+    return value
+
+def displayCards(cards):
+    rows = ['', '', '', '', '']
+
+    for i, card in enumerate(cards):
+        rows[0] += ' ___ '
+        if card == BACKSIDE:
+            rows[1] += '|## | '
+            rows[2] += '|###| '
+            rows[3] += '|_##| '
+        else:
+            rank, suit = card
+            rows[1] += f'|{rank.ljust(2)} | '
+            rows[2] += f'| {suit} | '
+            rows[3] += f'|_{rank.rjust(2, "_")}| '
+    
+    for row in rows:
+        print(row)
+            
+def getMove(playerHand, money):
+    while True: # Keep looping until the player enters a correct move.
+        moves = ['(H)it', '(S)tand']
+
+        if len(playerHand) == 2 and money > 0:
+            moves.append('(D)ouble down')
+        
+        movePrompt = ', '.join(moves) + '> '
+        move = input(movePrompt).upper()
+        if move in ('H', 'S'):
+            return move
+        if move == 'D' and '(D)ouble down' in moves:
+            return move
+
+if __name__ == '__main__':
+    main()
